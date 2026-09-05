@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOT FLYBITE</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-dark: #004c99;
+            --bg-light: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sub: #7f8c8d;
+            --border-color: #e2e8f0;
+            --success-color: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px 0;
+        }
+
+        /* Mobile Container Frame */
+        .mobile-container {
+            width: 100%;
+            max-width: 412px;
+            height: 840px;
+            background-color: var(--bg-light);
+            border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            border: 8px solid #334155;
+        }
+
+        /* Top Header */
+        .header {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .lang-switch {
+            display: flex;
+            background-color: #e2e8f0;
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .lang-btn {
+            border: none;
+            background: transparent;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content View Container */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease-in-out forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        /* UI Components */
+        .user-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+
+        .menu-list {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .menu-item-left i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Form Components */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background-color: white;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 102, 204, 0.3);
+            transition: background 0.2s;
+        }
+
+        .btn-primary:active {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background-color: transparent;
+            color: var(--text-sub);
+            border: 1px dashed var(--text-sub);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-social {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        /* Food Cards Grid & Menu */
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .food-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .food-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .food-img {
+            width: 100%;
+            height: 105px;
+            object-fit: cover;
+        }
+
+        .food-info {
+            padding: 10px;
+        }
+
+        .food-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .food-meta {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Notification List */
+        .notif-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .notif-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notif-text h4 {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .notif-text p {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        /* Order History Card */
+        .order-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            background-color: var(--card-bg);
+            display: none; /* Hidden on login page */
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+            width: 20%;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* Counter for ordering */
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .qty-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Top App Header -->
+        <div class="header">
+            <div class="brand-logo">
+                <i class="fa-solid fa-plane-departure"></i>
+                <span>AOT FLYBITE</span>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="switchLanguage('th')">TH</button>
+                <button class="lang-btn" onclick="switchLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <!-- Main Dynamic View Area -->
+        <div class="content-area">
+
+            <!-- 1. LOGIN PAGE (หน้าแรก) -->
+            <div id="page-login" class="page active">
+                <h2 class="page-title" data-key="login">เข้าสู่ระบบ</h2>
+                <button type="button" class="btn-social" onclick="handleLogin('Pongsakorn', 'pongsakorn@example.com')">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="google">
+                    <span data-key="google_login">Continue with Google</span>
+                </button>
+                
+                <div class="form-group">
+                    <label data-key="email">อีเมล</label>
+                    <input type="email" id="input-email" class="form-control" value="pongsakorn@example.com">
+                </div>
+                <div class="form-group">
+                    <label data-key="password">รหัสผ่าน</label>
+                    <input type="password" id="input-pass" class="form-control" value="12345678">
+                </div>
+                <div style="text-align: right; margin-bottom: 15px;">
+                    <a href="#" style="font-size: 0.8rem; color: var(--primary-color); text-decoration: none;" data-key="forgot_pass">ลืมรหัสผ่าน?</a>
+                </div>
+                
+                <!-- ปุ่มเข้าสู่ระบบ -->
+                <button type="button" class="btn-primary" onclick="submitLogin()" data-key="login_btn">เข้าสู่ระบบ</button>
+                
+                <!-- ปุ่มใช้งานโดยไม่ต้องเข้าสู่ระบบ -->
+                <button type="button" class="btn-secondary" onclick="handleGuestLogin()" data-key="guest_login">
+                    <i class="fa-solid fa-user-secret" style="margin-right: 5px;"></i> ใช้งานโดยไม่เข้าสู่ระบบ
+                </button>
+
+                <p style="text-align: center; font-size: 0.8rem; margin-top: 15px; color: var(--text-sub);">
+                    <span data-key="new_to_app">เพิ่งเคยใช้ AOT Flybite?</span> 
+                    <a href="#" style="color: var(--primary-color); text-decoration: none; font-weight: 500;" data-key="signup">ลงทะเบียน</a>
+                </p>
+            </div>
+
+            <!-- 2. HOME / RECOMMENDED RESTAURANTS PAGE -->
+            <div id="page-home" class="page">
+                <h2 class="page-title" data-key="rec_restaurants">ร้านอาหารแนะนำ</h2>
+                <div class="food-grid">
+                    <div class="food-card" onclick="selectFood('เรือนนมสด', 'บะหมี่เกี๊ยวแห้ง', 150, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400')">
+                        <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400" class="food-img" alt="Noodle">
+                        <div class="food-info">
+                            <div class="food-title" data-key="food_1">เรือนนมสด</div>
+                            <div class="food-meta">
+                                <span><i class="fa-solid fa-star" style="color:#f1c40f"></i> 4.5</span>
+                                <span><i class="fa-regular fa-clock"></i> 13 min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="food-card" onclick="selectFood('ข้าวมันไก่ตอน', 'ข้าวมันไก่ผสม', 120, 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400')">
+                        <img src="https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400" class="food-img" alt="Chicken Rice">
+                        <div class="food-info">
+                            <div class="food-title" data-key="food_2">ข้าวมันไก่ตอน</div>
+                            <div class="food-meta">
+                                <span><i class="fa-solid fa-star" style="color:#f1c40f"></i> 4.3</span>
+                                <span><i class="fa-regular fa-clock"></i> 13 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. FOOD ORDER PAGE -->
+            <div id="page-order" class="page">
+                <h2 class="page-title" id="order-shop-title">สั่งอาหาร</h2>
+                <div class="order-card">
+                    <img id="order-img" src="" style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:12px;">
+                    <h3 id="order-item-title">รายการอาหาร</h3>
+                    <p style="color: var(--primary-color); font-weight:600; font-size:1.2rem; margin-top:5px;" id="order-price">฿0</p>
+                    
+                    <div class="quantity-control">
+                        <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                        <span id="qty-count" style="font-size:1.1rem; font-weight:600;">1</span>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+
+                    <button class="btn-primary" onclick="proceedToCheckout()" data-key="add_to_cart">เพิ่มลงตะกร้า / ชำระเงิน</button>
+                </div>
+            </div>
+
+            <!-- 4. CHECKOUT PAGE -->
+            <div id="page-checkout" class="page">
+                <h2 class="page-title" data-key="checkout_title">สรุปคำสั่งซื้อ</h2>
+                <div class="order-card">
+                    <div class="order-header">
+                        <span data-key="summary">รายการที่สั่ง</span>
+                    </div>
+                    <div class="order-detail">
+                        <strong id="checkout-shop">ร้านค้า</strong>
+                    </div>
+                    <div class="order-detail" style="color: var(--text-sub);">
+                        <span id="checkout-item">1x รายการอาหาร</span>
+                    </div>
+                    <div class="order-total">
+                        <span>Total</span>
+                        <span style="color: var(--primary-color);" id="checkout-total">฿0</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-key="deliver_gate">จัดส่งที่ ประตูทางออก (Gate)</label>
+                    <input type="text" class="form-control" value="Gate A5">
+                </div>
+
+                <button class="btn-primary" onclick="confirmOrder()" data-key="confirm_order">ยืนยันสั่งซื้ออาหาร</button>
+            </div>
+
+            <!-- 5. FLIGHT INFO PAGE -->
+            <div id="page-flight" class="page">
+                <h2 class="page-title" data-key="flight_info">ข้อมูลเที่ยวบิน</h2>
+                <div class="form-group">
+                    <label data-key="flight_no">หมายเลขเที่ยวบิน</label>
+                    <input type="text" class="form-control" value="TG102">
+                </div>
+                <div class="form-group">
+                    <label data-key="date">วันที่</label>
+                    <input type="text" class="form-control" value="30 เม.ย. 2567">
+                </div>
+                <div class="form-group">
+                    <label data-key="gate">ประตูทางออกขึ้นเครื่อง (Gate)</label>
+                    <input type="text" class="form-control" value="A5">
+                </div>
+                <button class="btn-primary" style="margin-top: 10px;" data-key="search">ค้นหา</button>
+            </div>
+
+            <!-- 6. NOTIFICATIONS PAGE -->
+            <div id="page-notifications" class="page">
+                <h2 class="page-title" data-key="notifications">การแจ้งเตือน</h2>
+                
+                <div class="notif-card" style="background-color: #e8f5e9;">
+                    <div class="notif-icon" style="background-color: #2e7d32; color: white;">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div class="notif-text">
+                        <h4 style="color: #2e7d32;" data-key="status_order">สถานะการสั่งซื้อ</h4>
+                        <p data-key="order_proc">คำสั่งซื้อกำลังดำเนินการ</p>
+                    </div>
+                </div>
+
+                <div class="notif-card">
+                    <div class="notif-icon" style="background-color: #fff3e0; color: #e65100;">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="notif-text">
+                        <h4 data-key="food_ready">อาหารของคุณพร้อมแล้ว!</h4>
+                        <p>19:00</p>
+                    </div>
+                </div>
+
+                <div class="notif-card">
+                    <div class="notif-icon" style="background-color: #e3f2fd; color: #1565c0;">
+                        <i class="fa-solid fa-plane"></i>
+                    </div>
+                    <div class="notif-text">
+                        <h4 data-key="boarding_soon">เริ่มขึ้นเครื่องในอีก 30 นาที</h4>
+                        <p>Flight TG102 • 19:00</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. USER PROFILE PAGE -->
+            <div id="page-profile" class="page">
+                <h2 class="page-title" data-key="my_account">บัญชีของฉัน</h2>
+                <div class="user-card">
+                    <div class="user-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h3 id="user-display-name">Pongsakorn</h3>
+                        <p id="user-display-email" style="font-size: 0.8rem; opacity: 0.8;">pongsakorn@example.com</p>
+                    </div>
+                </div>
+
+                <div class="menu-list">
+                    <div class="menu-item" onclick="navigateTo('page-flight')">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-plane"></i>
+                            <span data-key="my_flight_info">ข้อมูลเที่ยวบินของฉัน</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item" onclick="navigateTo('page-history')">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span data-key="order_history">ประวัติการสั่งซื้อ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item" onclick="navigateTo('page-settings')">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-gear"></i>
+                            <span data-key="settings">การตั้งค่า</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item" onclick="logout()">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-right-from-bracket" style="color: #e74c3c;"></i>
+                            <span style="color: #e74c3c;" id="logout-text" data-key="logout">ออกจากระบบ</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. ORDER HISTORY PAGE -->
+            <div id="page-history" class="page">
+                <h2 class="page-title" data-key="order_history">ประวัติการสั่งซื้อ</h2>
+                <div id="history-container">
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span>Order ID #123456</span>
+                            <span>2 ก.พ. 2567</span>
+                        </div>
+                        <div class="order-detail">
+                            <strong data-key="food_1">ร้านเรือนนมสด</strong>
+                        </div>
+                        <div class="order-detail" style="color: var(--text-sub);">
+                            <span>1x บะหมี่เกี๊ยวแห้ง</span>
+                        </div>
+                        <div class="order-total">
+                            <span>Total</span>
+                            <span style="color: var(--primary-color);">฿150</span>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #2e7d32; font-weight: 500;" data-key="completed">
+                            <i class="fa-solid fa-circle-check"></i> เสร็จสิ้น
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. SETTINGS PAGE -->
+            <div id="page-settings" class="page">
+                <h2 class="page-title" data-key="settings">การตั้งค่า</h2>
+                <div class="menu-list">
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-globe"></i>
+                            <span data-key="language_opt">ภาษา</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-bell"></i>
+                            <span data-key="notifications">การแจ้งเตือน</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item">
+                        <div class="menu-item-left">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span data-key="app_version">เวอร์ชันแอป</span>
+                        </div>
+                        <span style="font-size: 0.8rem; color: var(--text-sub);">v1.0.0</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bottom-nav" id="main-nav">
+            <a class="nav-item active" onclick="navigateTo('page-home', this)">
+                <i class="fa-solid fa-house"></i>
+                <span data-key="nav_home">แนะนำ</span>
+            </a>
+            <a class="nav-item" onclick="navigateTo('page-flight', this)">
+                <i class="fa-solid fa-plane"></i>
+                <span data-key="nav_flight">เที่ยวบิน</span>
+            </a>
+            <a class="nav-item" onclick="navigateTo('page-notifications', this)">
+                <i class="fa-solid fa-bell"></i>
+                <span data-key="nav_notif">แจ้งเตือน</span>
+            </a>
+            <a class="nav-item" onclick="navigateTo('page-profile', this)">
+                <i class="fa-solid fa-user"></i>
+                <span data-key="nav_profile">บัญชี</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Dictionary Translation Data (TH / EN)
+        const translations = {
+            th: {
+                rec_restaurants: "ร้านอาหารแนะนำ",
+                food_1: "เรือนนมสด",
+                food_2: "ข้าวมันไก่ตอน",
+                flight_info: "ข้อมูลเที่ยวบิน",
+                flight_no: "หมายเลขเที่ยวบิน",
+                date: "วันที่",
+                gate: "ประตูทางออกขึ้นเครื่อง (Gate)",
+                search: "ค้นหา",
+                notifications: "การแจ้งเตือน",
+                status_order: "สถานะการสั่งซื้อ",
+                order_proc: "คำสั่งซื้อกำลังดำเนินการ",
+                food_ready: "อาหารของคุณพร้อมแล้ว!",
+                boarding_soon: "เริ่มขึ้นเครื่องในอีก 30 นาที",
+                my_account: "บัญชีของฉัน",
+                my_flight_info: "ข้อมูลเที่ยวบินของฉัน",
+                order_history: "ประวัติการสั่งซื้อ",
+                settings: "การตั้งค่า",
+                logout: "ออกจากระบบ",
+                login: "เข้าสู่ระบบ",
+                google_login: "ดำเนินการต่อด้วย Google",
+                email: "อีเมล",
+                password: "รหัสผ่าน",
+                forgot_pass: "ลืมรหัสผ่าน?",
+                login_btn: "เข้าสู่ระบบ",
+                guest_login: "ใช้งานโดยไม่เข้าสู่ระบบ",
+                new_to_app: "เพิ่งเคยใช้ AOT Flybite?",
+                signup: "ลงทะเบียน",
+                completed: "เสร็จสิ้น",
+                language_opt: "ภาษา",
+                app_version: "เวอร์ชันแอป",
+                nav_home: "แนะนำ",
+                nav_flight: "เที่ยวบิน",
+                nav_notif: "แจ้งเตือน",
+                nav_profile: "บัญชี",
+                add_to_cart: "เพิ่มลงตะกร้า / ชำระเงิน",
+                checkout_title: "สรุปคำสั่งซื้อ",
+                summary: "รายการที่สั่ง",
+                deliver_gate: "จัดส่งที่ ประตูทางออก (Gate)",
+                confirm_order: "ยืนยันสั่งซื้ออาหาร"
+            },
+            en: {
+                rec_restaurants: "Recommended Restaurants",
+                food_1: "Ruen Nom Sod",
+                food_2: "Hainanese Chicken Rice",
+                flight_info: "Flight Information",
+                flight_no: "Flight Number",
+                date: "Date",
+                gate: "Gate",
+                search: "Search",
+                notifications: "Notifications",
+                status_order: "Order Status",
+                order_proc: "Order is processing",
+                food_ready: "Your food is ready!",
+                boarding_soon: "Boarding in 30 mins",
+                my_account: "My Account",
+                my_flight_info: "My Flight Info",
+                order_history: "Order History",
+                settings: "Settings",
+                logout: "Log Out",
+                login: "Sign In",
+                google_login: "Continue with Google",
+                email: "Email",
+                password: "Password",
+                forgot_pass: "Forgot Password?",
+                login_btn: "Sign In",
+                guest_login: "Continue as Guest",
+                new_to_app: "New to AOT Flybite?",
+                signup: "Sign up",
+                completed: "Completed",
+                language_opt: "Language",
+                app_version: "App Version",
+                nav_home: "Home",
+                nav_flight: "Flight",
+                nav_notif: "Alerts",
+                nav_profile: "Account",
+                add_to_cart: "Add to Cart / Checkout",
+                checkout_title: "Checkout",
+                summary: "Order Summary",
+                deliver_gate: "Deliver to Gate",
+                confirm_order: "Confirm Order"
+            }
+        };
+
+        let currentLang = 'th';
+        let currentOrder = { shop: '', item: '', price: 0, qty: 1 };
+
+        // Functions for Login Actions
+        function submitLogin() {
+            const email = document.getElementById('input-email').value || 'User';
+            const name = email.split('@')[0];
+            handleLogin(name, email);
+        }
+
+        function handleGuestLogin() {
+            handleLogin('Guest User', 'guest@aotflybite.com');
+        }
+
+        function handleLogin(name, email) {
+            document.getElementById('user-display-name').textContent = name;
+            document.getElementById('user-display-email').textContent = email;
+            document.getElementById('main-nav').style.display = 'flex';
+            navigateTo('page-home');
+        }
+
+        function logout() {
+            document.getElementById('main-nav').style.display = 'none';
+            navigateTo('page-login');
+        }
+
+        // Food Order Functions
+        function selectFood(shop, item, price, img) {
+            currentOrder = { shop, item, price, qty: 1 };
+            document.getElementById('order-shop-title').textContent = shop;
+            document.getElementById('order-item-title').textContent = item;
+            document.getElementById('order-price').textContent = ฿${price};
+            document.getElementById('order-img').src = img;
+            document.getElementById('qty-count').textContent = 1;
+            navigateTo('page-order');
+        }
+
+        function updateQty(change) {
+            if (currentOrder.qty + change >= 1) {
+                currentOrder.qty += change;
+                document.getElementById('qty-count').textContent = currentOrder.qty;
+                document.getElementById('order-price').textContent = ฿${currentOrder.price * currentOrder.qty};
+            }
+        }
+
+        function proceedToCheckout() {
+            document.getElementById('checkout-shop').textContent = currentOrder.shop;
+            document.getElementById('checkout-item').textContent = ${currentOrder.qty}x ${currentOrder.item};
+            document.getElementById('checkout-total').textContent = ฿${currentOrder.price * currentOrder.qty};
+            navigateTo('page-checkout');
+        }
+
+        function confirmOrder() {
+            const historyContainer = document.getElementById('history-container');
+            const newOrderHTML = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span>Order ID #${Math.floor(100000 + Math.random() * 900000)}</span>
+                        <span>วันนี้</span>
+                    </div>
+                    <div class="order-detail">
+                        <strong>${currentOrder.shop}</strong>
+                    </div>
+                    <div class="order-detail" style="color: var(--text-sub);">
+                        <span>${currentOrder.qty}x ${currentOrder.item}</span>
+                    </div>
+                    <div class="order-total">
+                        <span>Total</span>
+                        <span style="color: var(--primary-color);">฿${currentOrder.price * currentOrder.qty}</span>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.8rem; color: #2e7d32; font-weight: 500;">
+                        <i class="fa-solid fa-circle-check"></i> ${translations[currentLang].completed}
+                    </div>
+                </div>
+            `;
+            historyContainer.insertAdjacentHTML('afterbegin', newOrderHTML);
+            navigateTo('page-history');
+        }
+
+        // Navigation Switcher
+        function navigateTo(pageId, navElement = null) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) targetPage.classList.add('active');
+
+            if (navElement) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                navElement.classList.add('active');
+            }
+        }
+
+        // Language Switcher Function
+        function switchLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+        }
+    </script>
+</body>
+</html>
