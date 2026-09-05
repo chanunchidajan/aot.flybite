@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOT FLYBITE - Airport Food Delivery</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #0066cc;
+            --primary-dark: #004c99;
+            --primary-light: #e6f0fa;
+            --accent: #ff9800;
+            --bg-body: #0b1329;
+            --bg-app: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px 0;
+        }
+
+        /* Mobile Container Frame */
+        .mobile-container {
+            width: 100%;
+            max-width: 412px;
+            height: 840px;
+            background-color: var(--bg-app);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            border: 8px solid #1e293b;
+        }
+
+        /* Top Header Area */
+        .header {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-logo i {
+            background: var(--primary-light);
+            padding: 8px;
+            border-radius: 10px;
+        }
+
+        /* Language Switcher */
+        .lang-switch {
+            display: flex;
+            background-color: #f1f5f9;
+            border-radius: 20px;
+            padding: 3px;
+            border: 1px solid var(--border);
+        }
+
+        .lang-btn {
+            border: none;
+            background: transparent;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            color: var(--text-sub);
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 6px rgba(0, 102, 204, 0.3);
+        }
+
+        /* Main Content Scrollable Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Pages Switching Control */
+        .page {
+            display: none !important;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .page.active {
+            display: block !important;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 18px;
+        }
+
+        /* Form Components */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            background-color: white;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        /* Buttons Styling */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            color: var(--text-sub);
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-social {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Cards & Grids */
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .food-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .food-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .food-img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+
+        .food-info {
+            padding: 12px;
+        }
+
+        .food-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .food-meta {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 22px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 102, 204, 0.25);
+        }
+
+        .user-avatar {
+            width: 54px;
+            height: 54px;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-list {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.2s ease;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:active {
+            background-color: var(--primary-light);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 25%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand-logo">
+                <i class="fa-solid fa-plane"></i>
+                <span>AOT FLYBITE</span>
+            </div>
+            <!-- Language Switcher Toggle -->
+            <div class="lang-switch">
+                <button type="button" class="lang-btn active" id="btn-lang-th">TH</button>
+                <button type="button" class="lang-btn" id="btn-lang-en">EN</button>
+            </div>
+        </div>
+
+        <!-- Scrollable Content Area -->
+        <div class="content-area">
+
+            <!-- PAGE 1: LOGIN -->
+            <div id="page-login" class="page active">
+                <h2 class="page-title" data-key="login_title">เข้าสู่ระบบ</h2>
+                
+                <button type="button" class="btn-social" id="btn-login-google">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="google">
+                    <span data-key="login_google">Continue with Google</span>
+                </button>
+                
+                <div class="form-group">
+                    <label data-key="label_email">อีเมล</label>
+                    <input type="email" id="input-email" class="form-control" value="pongsakorn@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label data-key="label_pass">รหัสผ่าน</label>
+                    <input type="password" id="input-pass" class="form-control" value="12345678">
+                </div>
+                
+                <button type="button" class="btn-primary" id="btn-submit-login" data-key="btn_login">เข้าสู่ระบบ</button>
+                <button type="button" class="btn-secondary" id="btn-guest-login" data-key="btn_guest">ใช้งานโดยไม่เข้าสู่ระบบ</button>
+            </div>
+
+            <!-- PAGE 2: HOME (RECOMMENDED) -->
+            <div id="page-home" class="page">
+                <h2 class="page-title" data-key="home_title">ร้านอาหารแนะนำ</h2>
+                
+                <div class="food-grid">
+                    <div class="food-card" onclick="alert(currentLang === 'th' ? 'เลือกเมนู บะหมี่เกี๊ยวแห้ง' : 'Selected Dry Wonton Noodles')">
+                        <img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400" class="food-img" alt="Food">
+                        <div class="food-info">
+                            <div class="food-title" data-key="food_1_title">เรือนนมสด</div>
+                            <span style="font-weight: 600; color: var(--primary);">฿150</span>
+                            <div class="food-meta">
+                                <span><i class="fa-solid fa-star" style="color:var(--accent)"></i> 4.8</span>
+                                <span><i class="fa-regular fa-clock"></i> 15 min</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="food-card" onclick="alert(currentLang === 'th' ? 'เลือกเมนู ข้าวมันไก่ผสม' : 'Selected Chicken Rice Combo')">
+                        <img src="https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=400" class="food-img" alt="Chicken Rice">
+                        <div class="food-info">
+                            <div class="food-title" data-key="food_2_title">ข้าวมันไก่ตอน</div>
+                            <span style="font-weight: 600; color: var(--primary);">฿120</span>
+                            <div class="food-meta">
+                                <span><i class="fa-solid fa-star" style="color:var(--accent)"></i> 4.5</span>
+                                <span><i class="fa-regular fa-clock"></i> 12 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE 3: FLIGHT INFO -->
+            <div id="page-flight" class="page">
+                <h2 class="page-title" data-key="flight_title">ข้อมูลเที่ยวบิน</h2>
+                
+                <div class="form-group">
+                    <label data-key="label_flight_no">หมายเลขเที่ยวบิน</label>
+                    <input type="text" class="form-control" value="TG102">
+                </div>
+                
+                <div class="form-group">
+                    <label data-key="label_gate">ประตูทางออก (Gate)</label>
+                    <input type="text" class="form-control" value="Gate A5">
+                </div>
+
+                <button type="button" class="btn-primary" style="margin-top: 10px;" data-key="btn_search">ค้นหาเที่ยวบิน</button>
+            </div>
+
+            <!-- PAGE 4: NOTIFICATIONS -->
+            <div id="page-notifications" class="page">
+                <h2 class="page-title" data-key="notif_title">การแจ้งเตือน</h2>
+                
+                <div style="background: white; padding: 16px; border-radius: var(--radius-md); border-left: 4px solid var(--primary); box-shadow: var(--shadow-sm); margin-bottom: 12px;">
+                    <h4 style="font-size:0.9rem; color:var(--primary);" data-key="notif_head">สถานะคำสั่งซื้อ</h4>
+                    <p style="font-size:0.8rem; color:var(--text-sub); margin-top:4px;" data-key="notif_body">อาหารของคุณกำลังถูกจัดเตรียม คาดว่าจะส่งถึง Gate ในอีก 15 นาที</p>
+                </div>
+            </div>
+
+            <!-- PAGE 5: USER PROFILE -->
+            <div id="page-profile" class="page">
+                <h2 class="page-title" data-key="profile_title">บัญชีของฉัน</h2>
+                
+                <div class="user-card">
+                    <div class="user-avatar"><i class="fa-solid fa-user"></i></div>
+                    <div>
+                        <h3 id="user-name" style="font-size:1.1rem;">Pongsakorn</h3>
+                        <p id="user-email" style="font-size:0.8rem; opacity:0.85;">pongsakorn@example.com</p>
+                    </div>
+                </div>
+
+                <div class="menu-list">
+                    <div class="menu-item" onclick="goToPage('page-flight')">
+                        <span data-key="menu_flight">ข้อมูลเที่ยวบินของฉัน</span>
+                        <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-sub);"></i>
+                    </div>
+                    <div class="menu-item" id="btn-logout" style="color: #ef4444;">
+                        <span data-key="menu_logout">ออกจากระบบ</span>
+                        <i class="fa-solid fa-right-from-bracket" style="font-size: 0.8rem;"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="main-nav">
+            <a class="nav-item active" id="nav-home">
+                <i class="fa-solid fa-utensils"></i>
+                <span data-key="nav_home">แนะนำ</span>
+            </a>
+            <a class="nav-item" id="nav-flight">
+                <i class="fa-solid fa-plane"></i>
+                <span data-key="nav_flight">เที่ยวบิน</span>
+            </a>
+            <a class="nav-item" id="nav-notif">
+                <i class="fa-solid fa-bell"></i>
+                <span data-key="nav_notif">แจ้งเตือน</span>
+            </a>
+            <a class="nav-item" id="nav-profile">
+                <i class="fa-solid fa-user"></i>
+                <span data-key="nav_profile">บัญชี</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // 1. Translation Dictionary
+        const i18n = {
+            th: {
+                login_title: "เข้าสู่ระบบ",
+                login_google: "Continue with Google",
+                label_email: "อีเมล",
+                label_pass: "รหัสผ่าน",
+                btn_login: "เข้าสู่ระบบ",
+                btn_guest: "ใช้งานโดยไม่เข้าสู่ระบบ",
+                home_title: "ร้านอาหารแนะนำ",
+                food_1_title: "เรือนนมสด",
+                food_2_title: "ข้าวมันไก่ตอน",
+                flight_title: "ข้อมูลเที่ยวบิน",
+                label_flight_no: "หมายเลขเที่ยวบิน",
+                label_gate: "ประตูทางออกขึ้นเครื่อง (Gate)",
+                btn_search: "ค้นหาเที่ยวบิน",
+                notif_title: "การแจ้งเตือน",
+                notif_head: "สถานะคำสั่งซื้อ",
+                notif_body: "อาหารของคุณกำลังถูกจัดเตรียม คาดว่าจะส่งถึง Gate ในอีก 15 นาที",
+                profile_title: "บัญชีของฉัน",
+                menu_flight: "ข้อมูลเที่ยวบินของฉัน",
+                menu_logout: "ออกจากระบบ",
+                nav_home: "แนะนำ",
+                nav_flight: "เที่ยวบิน",
+                nav_notif: "แจ้งเตือน",
+                nav_profile: "บัญชี"
+            },
+            en: {
+                login_title: "Sign In",
+                login_google: "Continue with Google",
+                label_email: "Email",
+                label_pass: "Password",
+                btn_login: "Sign In",
+                btn_guest: "Continue as Guest",
+                home_title: "Recommended Food",
+                food_1_title: "Ruen Nom Sod",
+                food_2_title: "Hainanese Chicken Rice",
+                flight_title: "Flight Info",
+                label_flight_no: "Flight Number",
+                label_gate: "Boarding Gate",
+                btn_search: "Search Flight",
+                notif_title: "Notifications",
+                notif_head: "Order Status",
+                notif_body: "Your meal is being prepared. Estimated delivery to Gate in 15 mins.",
+                profile_title: "My Account",
+                menu_flight: "My Flight Info",
+                menu_logout: "Log Out",
+                nav_home: "Home",
+                nav_flight: "Flight",
+                nav_notif: "Alerts",
+                nav_profile: "Account"
+            }
+        };
+
+        let currentLang = 'th';
+
+        // 2. Navigation Function
+        function goToPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+            
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+            }
+        }
+
+        // 3. Language Switcher Function
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Toggle Active Class on Buttons
+            document.getElementById('btn-lang-th').classList.toggle('active', lang === 'th');
+            document.getElementById('btn-lang-en').classList.toggle('active', lang === 'en');
+
+            // Apply Texts
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.textContent = i18n[lang][key];
+                }
+            });
+        }
+
+        // 4. Bind Events after DOM Loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Language Event Listeners
+            document.getElementById('btn-lang-th').addEventListener('click', () => setLanguage('th'));
+            document.getElementById('btn-lang-en').addEventListener('click', () => setLanguage('en'));
+
+            // Login Handlers
+            const loginSuccess = (name, email) => {
+                document.getElementById('user-name').textContent = name;
+                document.getElementById('user-email').textContent = email;
+                document.getElementById('main-nav').style.display = 'flex';
+                goToPage('page-home');
+            };
+
+            document.getElementById('btn-submit-login').addEventListener('click', () => {
+                const email = document.getElementById('input-email').value || 'user@aot.com';
+                loginSuccess(email.split('@')[0], email);
+            });
+
+            document.getElementById('btn-guest-login').addEventListener('click', () => {
+                loginSuccess('Guest User', 'guest@aotflybite.com');
+            });
+
+            document.getElementById('btn-login-google').addEventListener('click', () => {
+                loginSuccess('Google User', 'user.google@gmail.com');
+            });
+
+            // Bottom Nav Handlers
+            const navItems = [
+                { btn: 'nav-home', page: 'page-home' },
+                { btn: 'nav-flight', page: 'page-flight' },
+                { btn: 'nav-notif', page: 'page-notifications' },
+                { btn: 'nav-profile', page: 'page-profile' }
+            ];
+
+            navItems.forEach(item => {
+                document.getElementById(item.btn).addEventListener('click', function() {
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    goToPage(item.page);
+                });
+            });
+
+            // Logout Handler
+            document.getElementById('btn-logout').addEventListener('click', () => {
+                document.getElementById('main-nav').style.display = 'none';
+                goToPage('page-login');
+            });
+        });
+    </script>
+</body>
+</html>
+
